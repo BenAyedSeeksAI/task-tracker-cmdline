@@ -1,11 +1,11 @@
-import datetime
+from datetime import datetime
 import sqlite3
 
 from model import Task
 
 Filename = "tasks.db"
 
-class DbConnectionManger:
+class DbConnectionManger(object):
     def __init__(self, filename):
         self.filename = filename
 
@@ -13,7 +13,7 @@ class DbConnectionManger:
         def wrapper(self, *args, **kwargs):
             operation(self, *args, **kwargs)
             self.connection.commit()
-            print(f"{datetime.datetime.now()}: Commit is successful!!")
+            print(f"{datetime.now()}: Commit is successful!!")
         return wrapper
     
     def __enter__(self):
@@ -23,8 +23,8 @@ class DbConnectionManger:
         return self
 
     @commit
-    def insertRow(self, task : Task):
-        command = f"INSERT INTO projects(task_name, category) VALUES({task.task_name},{task.category});"
+    def insertRow(self, task):
+        command = f"INSERT INTO Task(task_name, category) VALUES('"+ str(task.task_name) +"', '"+ str(task.category) +"')"
         try:
             self.cursor.execute(command)
         except sqlite3.Error as er:
@@ -32,6 +32,6 @@ class DbConnectionManger:
         finally:
             print(f"Row created successfully!")
 
-    def __exit__(self):
+    def __exit__(self,type, value, traceback):
         print("Connection closed ...")
         self.connection.close()
