@@ -1,11 +1,16 @@
 import typer
 from rich.console import Console
 from rich.table import Table
+from model import Task
+from db import DbConnectionManger, Filename
 
 cnsle = Console()
 app = typer.Typer()
 
 tasks = [("start writing markdowns","work related"),("update github","work related")]
+def save(task : Task):
+        with DbConnectionManger(filename=Filename) as Conn:
+            Conn.insertRow(task)
 
 def get_category_color(category):
         COLORS = {'Learn': 'cyan', 'work related': 'red', 'Sports': 'cyan', 'Study': 'green'}
@@ -20,11 +25,14 @@ def formatTable():
     table.add_column("Category", min_width=12, justify="right")
     return table
 
-@app.command(short_help = "add an item")
+@app.command(short_help = "add a task")
 def add(task: str, category: str):
     typer.echo(f"adding task -{task}- of category -{category}-")
+    oneTask = Task(task,category)
+    save(oneTask)
+    
 
-@app.command(short_help= 'show')
+@app.command(short_help= 'show all tasks')
 def show():
     cnsle.print("[bold magenta]Todos[/bold magenta]!", "💻")
     table = formatTable()
