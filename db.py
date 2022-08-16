@@ -1,7 +1,6 @@
 from datetime import datetime
 import sqlite3
 
-from model import Task
 
 Filename = "tasks.db"
 
