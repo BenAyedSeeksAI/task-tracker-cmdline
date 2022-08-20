@@ -6,7 +6,6 @@ from models import Task
 cnsle = Console()
 app = typer.Typer()
 
-tasks = [("start writing markdowns","work related"),("update github","work related")]
 
 
 def get_category_color(category):
@@ -33,9 +32,10 @@ def add(task: str, category: str):
 def show():
     cnsle.print("[bold magenta]Todos[/bold magenta]!", "💻")
     table = formatTable()
-    for idx, data in enumerate(tasks, start= 1):
+    tasks = Task.objects()
+    for data in tasks:
         color = get_category_color(data[1])
-        table.add_row(str(idx),
+        table.add_row(str(data[2]),
                       data[0],
                       f"[{color}]{data[1]}[/{color}]"
                       )

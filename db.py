@@ -10,7 +10,7 @@ class DbConnectionManger(object):
 
     def commit(operation):
         def wrapper(self, *args, **kwargs):
-            operation(self, *args, **kwargs)
+            self.data = operation(self, *args, **kwargs)
             self.connection.commit()
             print(f"{datetime.now()}: Commit is successful!!")
         return wrapper
@@ -19,7 +19,22 @@ class DbConnectionManger(object):
         print("Connection started ...")
         self.connection = sqlite3.connect(self.filename)
         self.cursor = self.connection.cursor()
+        self.data = None
         return self
+    
+    @commit
+    def getObjects(self):
+        command = "SELECT * FROM Task"
+        data = None
+        try:
+            self.cursor.execute(command)
+            data = self.cursor.fetchall()
+        except sqlite3.Error as er:
+            print(f"SQLite error: {' '.join(er.args)}")
+        finally:
+            print(f"Data Retrieved ... ")
+        return data
+        
 
     @commit
     def insertRow(self, task):
@@ -30,6 +45,7 @@ class DbConnectionManger(object):
             print(f"SQLite error: {' '.join(er.args)}")
         finally:
             print(f"Row created successfully!")
+
 
     def __exit__(self,type, value, traceback):
         print("Connection closed ...")
