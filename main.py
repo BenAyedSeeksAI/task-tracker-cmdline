@@ -6,8 +6,6 @@ from models import Task
 cnsle = Console()
 app = typer.Typer()
 
-
-
 def get_category_color(category):
         COLORS = {'Learn': 'cyan', 'work related': 'red', 'Sports': 'cyan', 'Study': 'green'}
         if category in COLORS:
